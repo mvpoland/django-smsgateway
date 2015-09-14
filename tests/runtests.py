@@ -1,6 +1,5 @@
 import os
 import sys
-import unittest
 
 
 def setup_django_settings():
@@ -13,11 +12,12 @@ def run_tests():
     if not os.environ.get('DJANGO_SETTINGS_MODULE', False):
         setup_django_settings()
 
-    from django.conf import settings
-    from django.test.utils import get_runner
+    import django
+    from django.test.runner import DiscoverRunner
 
-    TestRunner = get_runner(settings)
-    test_suite = TestRunner(verbosity=2, interactive=True, failfast=False)
+    django.setup()
+
+    test_suite = DiscoverRunner(verbosity=2, interactive=True, failfast=False)
     test_suite.run_tests(['smsgateway'])
 
 

@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 
 import hashlib
-import redis 
+import redis
 
 from django.conf import settings
 from django.test import TestCase as DjangoTestCase
@@ -16,7 +16,7 @@ from smsgateway.utils import check_cell_phone_number, truncate_sms
 req_data = {
     'to': '+32000000001;+32000000002;+32000000003',
     'msg': 'text of the message',
-    'signature': 'cropped to 11 chars' 
+    'signature': 'cropped to 11 chars'
 }
 
 
@@ -32,7 +32,7 @@ class RedistoreBackendTestCase(DjangoTestCase):
 
     def test_initialize_without_sms_request(self):
         self.assert_(self.backend._initialize(None, self.conf) == False)
-        
+
     def test_initialize_with_sms_request(self):
         sms_request = SMSRequest(**req_data)
         self.assert_(self.backend._initialize(sms_request, self.conf) == True)
@@ -50,13 +50,13 @@ class RedistoreBackendTestCase(DjangoTestCase):
 class RedistoreSendSingleSMSTestCase(DjangoTestCase):
     def setUp(self):
         self.conf = settings.SMSGATEWAY_ACCOUNTS['redistore']
-        self.rdb = redis.Redis(host=self.conf['host'], 
+        self.rdb = redis.Redis(host=self.conf['host'],
                                port=self.conf['port'],
                                db=self.conf['dbn'],
                                password=self.conf['pwd'])
         self.assert_(SMS.objects.count() == 0)
-        send('+32000000001', 'testing message', 'the signature', 
-             using='redistore') 
+        send('+32000000001', 'testing message', 'the signature',
+             using='redistore')
         self.assert_(SMS.objects.count() == 1)
         self.sms = SMS.objects.get(pk=1)
 
@@ -97,13 +97,13 @@ class RedistoreSendSingleSMSTestCase(DjangoTestCase):
 class RedistoreSendMultipleSMSTestCase(DjangoTestCase):
     def setUp(self):
         self.conf = settings.SMSGATEWAY_ACCOUNTS['redistore']
-        self.rdb = redis.Redis(host=self.conf['host'], 
+        self.rdb = redis.Redis(host=self.conf['host'],
                                port=self.conf['port'],
                                db=self.conf['dbn'],
                                password=self.conf['pwd'])
         self.assert_(SMS.objects.count() == 0)
         send(req_data['to'], req_data['msg'], req_data['signature'],
-             using='redistore') 
+             using='redistore')
         self.assert_(SMS.objects.count() == 3)
         self.smses = SMS.objects.all()
 

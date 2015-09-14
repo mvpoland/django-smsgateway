@@ -13,11 +13,11 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE':   'django.db.backends.sqlite3', 
+        'ENGINE':   'django.db.backends.sqlite3',
         'NAME':     'smsgateway_test',
-        'USER':     '', 
-        'PASSWORD': '', 
-        'HOST':     '', 
+        'USER':     '',
+        'PASSWORD': '',
+        'HOST':     '',
         'PORT':     '',
     }
 }
@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'smsgateway.tests',
 ]
 
+SMSGATEWAY_MSISDN_PREFIX = '+'
 SMSGATEWAY_HOOK = {
     'SIM': {
         'TOPUP': 'mvne.telco.direct_debit.utils.incoming_topup_sms',
@@ -133,7 +134,7 @@ LOGGING = {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'simple' 
+            'formatter': 'simple'
         }
     },
     'loggers': {
