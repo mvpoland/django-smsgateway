@@ -3,3 +3,4 @@ hiredis
 celery
 lockfile==0.9.1
 django-statsd-mozilla==0.3.15
+git+https://github.com/vikingco/django-locking.git@dc39a0580827381743e53a5924c145be1635d426#egg=django-locking

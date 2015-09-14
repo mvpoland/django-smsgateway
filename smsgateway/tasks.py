@@ -6,11 +6,10 @@ from django.conf import settings
 from celery import shared_task as task
 from django_statsd.clients import statsd
 
-from lockfile import FileLock, AlreadyLocked, LockTimeout
-
 from smsgateway import get_account, send, send_queued
 from smsgateway.backends.base import SMSBackend
 from smsgateway.enums import PRIORITY_DEFERRED
+from smsgateway.locking import acquire_lock
 from smsgateway.models import SMS, QueuedSMS
 
 
@@ -21,19 +20,10 @@ LOCK_WAIT_TIMEOUT = getattr(settings, "SMSES_LOCK_WAIT_TIMEOUT", -1)
 @task
 def send_smses(send_deferred=False, backend=None):
     # Get lock so there is only one sms sender at the same time.
-    if send_deferred:
-        lock = FileLock('send_sms_deferred')
-    else:
-        lock = FileLock('send_sms')
-    try:
-        lock.acquire(LOCK_WAIT_TIMEOUT)
-    except AlreadyLocked:
-        logger.info('Could not acquire lock.')
+    lock_name = 'send_sms_deferred' if send_deferred else 'send_sms'
+    lock = acquire_lock(lock_name, LOCK_WAIT_TIMEOUT)
+    if not lock:
         return
-    except LockTimeout:
-        logger.info('Lock timed out.')
-        return
-
     successes, failures = 0, 0
     try:
         # Get SMSes that need to be sent (deferred or non-deferred)
