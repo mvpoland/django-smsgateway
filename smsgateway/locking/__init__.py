@@ -8,5 +8,5 @@ def acquire_lock(name, timeout):
     classname = getattr(settings, 'SMSGATEWAY_LOCKING_CLASS', 'smsgateway.locking.files.Lock')
     lock_class = import_string(classname)
     lock = lock_class(name)
-    lock.acquire(timeout)
-    return lock
+    locked = lock.acquire(timeout)
+    return lock if locked else None
