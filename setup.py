@@ -35,6 +35,12 @@ setup(
     long_description=open('README.rst', 'r').read(),
     author='Jef Geskens, City Live nv',
     packages=find_packages('.'),
+    install_requires=[
+        'lockfile==0.9.1',
+        'hiredis==0.2.0',
+        'redis==2.7.6',
+        'celery==3.1.17',
+    ],
     package_data={'smsgateway': [
                 'templates/*.html', 'templates/*/*.html', 'templates/*/*/*.html',
                 'locale/*/LC_MESSAGES/*.mo', 'locale/*/LC_MESSAGES/*.po',
