@@ -4,6 +4,8 @@ import re
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
+SMS_LENGTH_LIMIT = getattr(settings, 'SMSGATEWAY_SMS_LENGTH_LIMIT', 160)
+
 
 def strspn(source, allowed):
     newchrs = []
@@ -19,7 +21,7 @@ def check_cell_phone_number(number):
         cleaned_number = msisdn_prefix + cleaned_number
     return str(cleaned_number)
 
-def truncate_sms(text, max_length=160):
+def truncate_sms(text, max_length=SMS_LENGTH_LIMIT):
     text = text.strip()
     if len(text) <= max_length:
         return text
