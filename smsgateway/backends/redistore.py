@@ -45,13 +45,16 @@ class RedistoreBackend(SMSBackend):
                                                password=account_dict['pwd'])
         return True
 
-
     def _get_sms_list(self, sms_request):
         if not sms_request:
             return []
         sms_list = []
-        self.reference = (datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                          + '+' + u''.join(sms_request.to[:1]))
+        self.reference = hashlib.md5(
+            datetime.datetime.now().strftime('%Y%m%d%H%M%S') +
+            '+' +
+            u''.join(sms_request.to[:1]) +
+            sms_request.msg
+        ).hexdigest()
         for msisdn in sms_request.to:
             sms_list.append(SMSRequest(msisdn,
                                        sms_request.msg,
@@ -60,13 +63,12 @@ class RedistoreBackend(SMSBackend):
                                        reference=self.reference))
         return sms_list
 
-
     def _send_smses(self):
         if not self.sms_data_iter:
             return []
 
         pipe = self.redis_conn.pipeline(transaction=False)
-        key = hashlib.md5(self.reference).hexdigest()
+        key = self.reference
         queue_key = self.prefix('smsreq:%s' % key)
         allqueues_key = self.prefix('outq')
 
@@ -91,7 +93,6 @@ class RedistoreBackend(SMSBackend):
         pipe_results = pipe.execute()
         return pipe_results
 
-
     def _check_sent_smses(self, results):
         """Check pipe execution results and create SMS objects."""
         if len(results) % 2 != 1:
@@ -114,7 +115,6 @@ class RedistoreBackend(SMSBackend):
         else:
             return False
 
-
     def send(self, sms_request, account_dict):
         """RedistoreBackend Entry Point"""
         self._initialize(sms_request, account_dict)
@@ -122,7 +122,6 @@ class RedistoreBackend(SMSBackend):
         redis_results = self._send_smses()
         check_result = self._check_sent_smses(redis_results)
         return check_result
-
 
     def get_slug(self):
         return 'redistore'
