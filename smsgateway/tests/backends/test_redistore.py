@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
-import hashlib
 import redis
 
 from django.conf import settings
@@ -57,7 +57,7 @@ class RedistoreSendSingleSMSTestCase(DjangoTestCase):
                                db=self.conf['dbn'],
                                password=self.conf['pwd'])
         self.assert_(SMS.objects.count() == 0)
-        send('+32000000001', 'testing message', 'the signature', using='redistore')
+        send('+32000000001', 'testing message Ą', 'the signature', using='redistore')
         self.assert_(SMS.objects.count() == 1)
         self.sms = SMS.objects.get(pk=1)
 
@@ -68,7 +68,7 @@ class RedistoreSendSingleSMSTestCase(DjangoTestCase):
         SMS.objects.all().delete()
 
     def test_single_sms_object_values(self):
-        self.assert_(self.sms.content == 'testing message')
+        self.assert_(self.sms.content == 'testing message Ą')
         self.assert_(self.sms.to == '32000000001')
         self.assert_(self.sms.sender == 'the signature'[:len(self.sms.sender)])
 
@@ -93,7 +93,7 @@ class RedistoreSendSingleSMSTestCase(DjangoTestCase):
                 'dest_addr_ton': '1',
                 'destination_addr': '32000000001',
                 'esme_vrfy_seqn': '-1',
-                'short_message': 'testing message',
+                'short_message': 'testing message ?',
             },
         )
 
