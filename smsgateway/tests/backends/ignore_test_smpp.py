@@ -1,20 +1,17 @@
-#-*- coding: utf-8 -*-
-
-import os
-import sys
+# -*- coding: utf-8 -*-
 
 from django.conf import settings
 from django.test import TestCase as DjangoTestCase
+
 from smsgateway import send
 from smsgateway.backends.smpp import SMPPBackend
 from smsgateway.models import SMS
 from smsgateway.sms import SMSRequest
 from smsgateway.utils import check_cell_phone_number, truncate_sms
-from smsgateway.smpplib.client import (SMPP_CLIENT_STATE_CLOSED,
-                                       SMPP_CLIENT_STATE_OPEN,
-                                       SMPP_CLIENT_STATE_BOUND_TX,
-                                       SMPP_CLIENT_STATE_BOUND_RX,
-                                       SMPP_CLIENT_STATE_BOUND_TRX)
+from smsgateway.smpplib.client import (
+    SMPP_CLIENT_STATE_CLOSED,
+    SMPP_CLIENT_STATE_BOUND_TRX,
+)
 
 
 req_data = {

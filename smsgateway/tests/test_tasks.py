@@ -16,8 +16,10 @@ from mock import call, patch
 
 ACCOUNTS = getattr(settings, "SMSGATEWAY_ACCOUNTS", {})
 
+
 def _(key):
     return '%s%s' % (ACCOUNTS['redistore']['key_prefix'], key)
+
 
 def setup_redis_inq(rdb, count, **kwargs):
     source_addr = kwargs.get('source_addr', '+324832077%02d')

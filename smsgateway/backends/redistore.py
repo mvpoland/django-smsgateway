@@ -1,4 +1,5 @@
 #-*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import datetime
 import hashlib
 import logging
@@ -35,7 +36,8 @@ class RedistoreBackend(SMSBackend):
 
         if sms_request.signature:
             self.sender = sms_request.signature
-        else: self.sender = u'[%s]' % self.get_slug()
+        else:
+            self.sender = '[%s]' % self.get_slug()
 
         self.sms_data_iter = SMSDataIterator(sms_list, account_dict)
         self.redis_key_prefix = account_dict['key_prefix']
@@ -49,12 +51,12 @@ class RedistoreBackend(SMSBackend):
         if not sms_request:
             return []
         sms_list = []
-        self.reference = hashlib.md5(
-            datetime.datetime.now().strftime('%Y%m%d%H%M%S') +
-            '+' +
-            u''.join(sms_request.to[:1]) +
-            sms_request.msg
-        ).hexdigest()
+        reference = '+'.join((
+            datetime.datetime.now().strftime('%Y%m%d%H%M%S'),
+            ''.join(sms_request.to[:1]),
+            sms_request.msg,
+        ))
+        self.reference = hashlib.md5(reference.encode('ascii', errors='ignore')).hexdigest()
         for msisdn in sms_request.to:
             sms_list.append(SMSRequest(msisdn,
                                        sms_request.msg,
@@ -141,7 +143,7 @@ class SMSDataIterator:
         while len(self.sms_list):
             sms = self.sms_list.pop(0)
             text = sms.msg
-            text = text.replace(u'€', u'EUR')
+            text = text.replace('€', 'EUR')
             text = text.encode('iso-8859-1', 'replace')
 
             return {
