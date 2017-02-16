@@ -35,7 +35,8 @@ class RedistoreBackend(SMSBackend):
 
         if sms_request.signature:
             self.sender = sms_request.signature
-        else: self.sender = u'[%s]' % self.get_slug()
+        else:
+            self.sender = u'[%s]' % self.get_slug()
 
         self.sms_data_iter = SMSDataIterator(sms_list, account_dict)
         self.redis_key_prefix = account_dict['key_prefix']

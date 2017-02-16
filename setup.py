@@ -41,6 +41,7 @@ setup(
         'redis==2.7.6',
         'celery==3.1.17',
     ],
+    setup_requires=['pytest-runner', ],
     package_data={'smsgateway': [
                 'templates/*.html', 'templates/*/*.html', 'templates/*/*/*.html',
                 'locale/*/LC_MESSAGES/*.mo', 'locale/*/LC_MESSAGES/*.po',
