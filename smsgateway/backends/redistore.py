@@ -41,8 +41,10 @@ class RedistoreBackend(SMSBackend):
 
         self.sms_data_iter = SMSDataIterator(sms_list, account_dict)
         self.redis_key_prefix = account_dict['key_prefix']
-        self.redis_pool = redis.ConnectionPool(host=account_dict['host'],
-                                               port=account_dict['port'],
+        host = account_dict['host'] or 'localhost'
+        port = account_dict['port'] or 6379
+        self.redis_pool = redis.ConnectionPool(host=host,
+                                               port=port,
                                                db=account_dict['dbn'],
                                                password=account_dict['pwd'])
         return True
