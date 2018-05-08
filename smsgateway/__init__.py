@@ -1,4 +1,4 @@
-__version__ = '2.2.0'
+__version__ = '2.2.1'
 
 
 def get_account(using=None):
@@ -21,12 +21,13 @@ def send(to, msg, signature, using=None, reliable=False):
     *   'using' is an optional parameter where you can specify a specific account
         to send messages from.
     """
-    # Don't send empty smses
-    if not msg:
-        return
-
     from smsgateway.backends import get_backend
     from smsgateway.sms import SMSRequest
+    from smsgateway.utils import in_whitelist
+    if not in_whitelist(to):
+        return
+    if not msg:
+        return
     account_dict = get_account(using)
     backend = get_backend(account_dict['backend'])
     sms_request = SMSRequest(to, msg, signature, reliable=reliable)

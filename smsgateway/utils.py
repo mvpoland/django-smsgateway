@@ -2,8 +2,11 @@ import logging
 import re
 
 from django.conf import settings
+from smsgateway.enums import WHITELIST
 
 logger = logging.getLogger(__name__)
+
+
 SMS_LENGTH_LIMIT = getattr(settings, 'SMSGATEWAY_SMS_LENGTH_LIMIT', 160)
 
 
@@ -14,12 +17,14 @@ def strspn(source, allowed):
             newchrs.append(c)
     return u''.join(newchrs)
 
+
 def check_cell_phone_number(number):
     cleaned_number = strspn(number, u'0123456789')
     msisdn_prefix = getattr(settings, 'SMSGATEWAY_MSISDN_PREFIX', '')
     if msisdn_prefix and not cleaned_number.startswith(msisdn_prefix):
         cleaned_number = msisdn_prefix + cleaned_number
     return str(cleaned_number)
+
 
 def truncate_sms(text, max_length=SMS_LENGTH_LIMIT):
     text = text.strip()
@@ -28,6 +33,7 @@ def truncate_sms(text, max_length=SMS_LENGTH_LIMIT):
     else:
         logger.error("Trying to send an SMS that is too long: %s", text)
         return text[:max_length-3] + '...'
+
 
 def parse_sms(content):
 
@@ -51,3 +57,7 @@ def parse_sms(content):
                         subremainder = remainder[len(subkeyword):].strip()
                         return [keyword, subkeyword] + subremainder.split()
     return None
+
+
+def in_whitelist(msisdn):
+    return WHITELIST is None or str(msisdn) in WHITELIST

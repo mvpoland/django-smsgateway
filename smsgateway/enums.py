@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+
 
 OPERATOR_UNKNOWN = 0
 OPERATOR_PROXIMUS = 1
@@ -42,3 +44,5 @@ PRIORITIES = (
     (PRIORITY_LOW,      'low'),
     (PRIORITY_DEFERRED, 'deferred'),
 )
+
+WHITELIST = getattr(settings, 'SMSGATEWAY_WHITELIST', None)
