@@ -10,7 +10,7 @@ from lockfile import FileLock, AlreadyLocked, LockTimeout
 
 from smsgateway import get_account, send, send_queued
 from smsgateway.backends.base import SMSBackend
-from smsgateway.enums import PRIORITY_DEFERRED, WHITELIST
+from smsgateway.enums import PRIORITY_DEFERRED, CONSUME_INCOMING_SMSES
 from smsgateway.models import SMS, QueuedSMS
 
 
@@ -94,9 +94,8 @@ def process_smses(smsk, sms_id, account_slug):
 
 
 def recv_smses(account_slug='redistore', async=False):
-    # to sleep more comfortable, we explicitly don't want to receive smses while in WHITELIST mode
-    # (because of shared ESME instances)
-    if WHITELIST:
+    # by default we don't want to consume SMSes even if job was activated
+    if not CONSUME_INCOMING_SMSES:
         return
 
     def _(key):

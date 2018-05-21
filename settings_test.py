@@ -113,6 +113,8 @@ SMSGATEWAY_BACKENDS = (
     'smsgateway.backends.smpp.SMPPBackend',
 )
 
+SMSGATEWAY_CONSUME_INCOMING_SMSES = True
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

@@ -59,5 +59,5 @@ def parse_sms(content):
     return None
 
 
-def in_whitelist(msisdn):
+def should_send(msisdn):
     return WHITELIST is None or str(msisdn) in WHITELIST

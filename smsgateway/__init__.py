@@ -23,8 +23,8 @@ def send(to, msg, signature, using=None, reliable=False):
     """
     from smsgateway.backends import get_backend
     from smsgateway.sms import SMSRequest
-    from smsgateway.utils import in_whitelist
-    if not in_whitelist(to):
+    from smsgateway.utils import should_send
+    if not should_send(to):
         return
     if not msg:
         return
