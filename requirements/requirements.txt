@@ -17,5 +17,3 @@ phonenumberslite==7.3.2
 
 six>=1.11.0,<2.0
 future==0.16.0
-
-django-waffle==0.16.0
