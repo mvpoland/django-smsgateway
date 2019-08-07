@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from past.builtins import basestring
+from six import string_types
 
 from smsgateway.utils import check_cell_phone_number, truncate_sms
 
@@ -14,7 +14,7 @@ class SMSRequest(object):
 
         sms_request = SMSRequest(to='+32472123456;+3298723456', u'Hello, world!', signature='9898')
         """
-        self.to = [check_cell_phone_number(n) for n in (to.split(';') if isinstance(to, basestring) else to)]
+        self.to = [check_cell_phone_number(n) for n in (to.split(';') if isinstance(to, string_types) else to)]
         self.msg = truncate_sms(msg)
         self.signature = signature[:16] if signature[1:].isdigit() else signature[:11]
         self.reliable = reliable

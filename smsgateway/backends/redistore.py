@@ -42,23 +42,41 @@ class RedistoreBackend(SMSBackend):
 
         self.sms_data_iter = SMSDataIterator(sms_list, account_dict)
         self.redis_key_prefix = account_dict['key_prefix']
-        self.redis_pool = ConnectionPool(host=account_dict['host'],
-                                         port=account_dict['port'],
-                                         db=account_dict['dbn'],
-                                         password=account_dict['pwd'])
+        host = account_dict['host'] or 'localhost'
+        port = account_dict['port'] or 6379
+        self.redis_pool = ConnectionPool(
+            host=host,
+            port=port,
+            db=account_dict['dbn'],
+            password=account_dict['pwd']
+        )
         return True
+
+    def get_send_reference(self, sms_request):
+        return '+'.join([
+            str(datetime.now().strftime('%Y%m%d%H%M%S')),
+            ''.join(sms_request.to[:1]),
+            str(sms_request.msg),
+        ])
 
     def _get_sms_list(self, sms_request):
         if not sms_request:
             return []
         sms_list = []
-        self.reference = (datetime.now().strftime('%Y%m%d%H%M%S') + '+' + u''.join(sms_request.to[:1]))
+
+        self.reference = self.get_send_reference(sms_request)
+        self.reference = md5(self.reference.encode()).hexdigest()
+
         for msisdn in sms_request.to:
-            sms_list.append(SMSRequest(msisdn,
-                                       sms_request.msg,
-                                       sms_request.signature,
-                                       reliable=sms_request.reliable,
-                                       reference=self.reference))
+            sms_list.append(
+                SMSRequest(
+                    msisdn,
+                    sms_request.msg,
+                    sms_request.signature,
+                    reliable=sms_request.reliable,
+                    reference=self.reference
+                )
+            )
         return sms_list
 
     def _send_smses(self):
@@ -66,14 +84,14 @@ class RedistoreBackend(SMSBackend):
             return []
 
         pipe = self.redis_conn.pipeline(transaction=False)
-        key = md5(self.reference).hexdigest()
+        key = self.reference
         queue_key = self.prefix('smsreq:{}'.format(key))
         allqueues_key = self.prefix('outq')
 
         # feed the pipe
         for idx, sms_data in enumerate(self.sms_data_iter):
             source_sms = sms_data.pop('source_sms')
-            sms_key = self.prefix('sms:{}:{}'.format((key, idx)))
+            sms_key = self.prefix('sms:{}:{}'.format(key, idx))
             pipe.hmset(sms_key, sms_data)
             pipe.rpush(queue_key, sms_key)
             sent_sms = {

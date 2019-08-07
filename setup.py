@@ -1,29 +1,6 @@
 from setuptools import setup, find_packages
-from pip._internal.req.req_file import parse_requirements
-from pip._internal.download import PipSession
 
-from os import path
 from smsgateway import __version__
-
-
-# Lists of requirements and dependency links which are needed during runtime, testing and setup
-install_requires = []
-tests_require = []
-dependency_links = []
-
-# Inject test requirements from requirements_test.txt into setup.py
-requirements_file = parse_requirements(path.join('requirements', 'requirements.txt'), session=PipSession())
-for req in requirements_file:
-    install_requires.append(str(req.req))
-    if req.link:
-        dependency_links.append(str(req.link))
-
-# Inject test requirements from requirements_test.txt into setup.py
-requirements_test_file = parse_requirements(path.join('.', 'requirements', 'requirements_test.txt'), session=PipSession())
-for req in requirements_test_file:
-    tests_require.append(str(req.req))
-    if req.link:
-        dependency_links.append(str(req.link))
 
 
 setup(
@@ -38,10 +15,19 @@ setup(
     packages=find_packages('.'),
     include_package_data=True,
     zip_safe=False,
-    install_requires=install_requires,
+    install_requires=[
+        'django-statsd-unleashed>=1.0.1',
+        'statsd>=2.1.2',
+        'redis>=2.10.5',
+        'vine==1.1.3',
+        'pytz>=2016.7',
+        'django-db-locking>=2.0.0',
+        'phonenumberslite==7.3.2',
+        'six<2.0,>=1.11.0',
+        'future==0.16.0'
+    ],
     setup_requires=['pytest-runner', ],
-    tests_require=tests_require,
-    dependency_links=dependency_links,
+    dependency_links=[],
     classifiers=[
         'Intended Audience :: Developers',
         'Programming Language :: Python',

@@ -10,6 +10,7 @@ from six import iteritems
 from smsgateway import get_account
 
 logger = getLogger(__name__)
+SMS_LENGTH_LIMIT = getattr(settings, 'SMSGATEWAY_SMS_LENGTH_LIMIT', 160)
 
 
 def strspn(source, allowed):
@@ -29,7 +30,7 @@ def check_cell_phone_number(number):
 
 
 def get_max_msg_length():
-    return get_account().get('max_msg_length')
+    return get_account().get('max_msg_length') or SMS_LENGTH_LIMIT
 
 
 def truncate_sms(text, max_length=get_max_msg_length() or 160):
@@ -62,14 +63,14 @@ def _match_keywords(content, hooks):
         return content
 
     # Split off the keyword
-    remaining_content = content.split(' ', 1)[1] if ' ' in content else ''
+    remaining_content = content[len(keyword):].strip()
 
     # There are multiple subkeywords, recurse
     if isinstance(hook, dict):
-        return _match_keywords(remaining_content, hook)
+        return keyword, _match_keywords(remaining_content, hook)
     # This is the callable, we're done
     else:
-        return remaining_content
+        return keyword, remaining_content
 
 
 def parse_sms(content):
@@ -85,7 +86,7 @@ def parse_sms(content):
 
     from smsgateway.backends.base import all_hooks
     content = _match_keywords(content, all_hooks)
-    return content.split(' ')
+    return content
 
 
 def is_pre_django2():
