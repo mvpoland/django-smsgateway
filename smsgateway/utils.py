@@ -21,8 +21,11 @@ def strspn(source, allowed):
 
 
 def check_cell_phone_number(number):
-    parsed_number = parse(number, getattr(settings, 'SMSGATEWAY_DEFAULT_LOCALE', 'BE'))
-    return f'{parsed_number.country_code}{parsed_number.national_number}'
+    parsed_number = parse(number, getattr(settings, 'SMSGATEWAY_DEFAULT_LOCALE', 'PL'))
+    return '{}{}'.format(
+        parsed_number.country_code,
+        parsed_number.national_number
+    )
 
 
 def get_max_msg_length():
