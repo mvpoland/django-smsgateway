@@ -21,7 +21,7 @@ setup(
         'redis>=2.10.5',
         'vine==1.1.3',
         'pytz>=2016.7',
-        'django-db-locking>=2.0.0',
+        'django-db-locking==2.0.10',
         'phonenumberslite==7.3.2',
         'six<2.0,>=1.11.0',
         'future==0.16.0'
