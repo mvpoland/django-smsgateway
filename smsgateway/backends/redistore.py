@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 
 from __future__ import absolute_import
+from builtins import str
+from builtins import object
 from datetime import datetime
 from hashlib import md5
 from logging import getLogger
@@ -140,7 +142,7 @@ class RedistoreBackend(SMSBackend):
         return 'redistore'
 
 
-class SMSDataIterator:
+class SMSDataIterator(object):
     def __init__(self, sms_list, account_dict):
         self.sms_list = sms_list
         self.source_addr_ton = account_dict['source_addr_ton']
@@ -150,7 +152,7 @@ class SMSDataIterator:
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         while len(self.sms_list):
             sms = self.sms_list.pop(0)
             text = sms.msg

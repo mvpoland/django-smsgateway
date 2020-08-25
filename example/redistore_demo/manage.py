@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
 from django.core.management import execute_manager
 from imp import find_module
 from os import environ
 from sys import path as sys_path, stderr, exit
-import settings  # noqa
+from . import settings  # noqa
 sys_path.insert(0, '../..')  # parent of inline_media directory
 sys_path.insert(0, '..')
 

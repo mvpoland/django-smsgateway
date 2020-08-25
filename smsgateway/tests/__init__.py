@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from builtins import map
 from os import chdir, path, getcwd, environ
 from sys import path as sys_path
 from unittest import TestSuite, TestLoader

@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from builtins import object
 from six import string_types
 
 from smsgateway.utils import check_cell_phone_number, truncate_sms

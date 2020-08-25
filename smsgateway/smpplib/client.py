@@ -22,6 +22,9 @@
 
 """SMPP client module"""
 from __future__ import absolute_import
+from builtins import map
+from builtins import str
+from builtins import object
 from logging import getLogger
 
 from socket import socket, AF_INET, SOCK_STREAM, error as socket_error, timeout
@@ -115,7 +118,7 @@ def log(*msg):
     msg = list(map(str, msg))
 
 
-class Client:
+class Client(object):
     """SMPP client class"""
 
     state = SMPP_CLIENT_STATE_CLOSED

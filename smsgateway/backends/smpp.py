@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 
 from __future__ import absolute_import
+from builtins import next
+from builtins import object
 from datetime import datetime
 from logging import getLogger
 
@@ -105,14 +107,14 @@ class SMPPBackend(SMSBackend):
         return 'smpp'
 
 
-class SMSDataIterator:
+class SMSDataIterator(object):
     def __init__(self, sms_list):
         self.sms_list = sms_list
 
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         while len(self.sms_list):
             sms = self.sms_list.pop(0)
             text = sms.msg

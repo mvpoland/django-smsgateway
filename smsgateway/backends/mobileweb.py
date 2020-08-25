@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from builtins import map
 from datetime import datetime
 from re import findall
 
