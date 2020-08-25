@@ -1,7 +1,8 @@
 # -*- encoding: utf-8 -*-
 from __future__ import unicode_literals
 from __future__ import absolute_import
-from factory import DjangoModelFactory, Sequence
+import factory
+from factory.django import DjangoModelFactory
 from smsgateway.models import SMS
 
 
@@ -10,5 +11,5 @@ class SMSFactory(DjangoModelFactory):
         model = SMS
 
     content = 'This is a test'
-    sender = Sequence(lambda n: u'+32476{0:06d}'.format(n))
-    to = Sequence(lambda n: u'+32476{0:06d}'.format(n))
+    sender = factory.Sequence(lambda n: u'+32476{0:06d}'.format(n))
+    to = factory.Sequence(lambda n: u'+32476{0:06d}'.format(n))

@@ -19,12 +19,11 @@ setup(
         'django-statsd-unleashed>=1.0.1',
         'statsd>=2.1.2',
         'redis>=2.10.5',
-        'vine==1.1.3',
         'pytz>=2016.7',
-        'django-db-locking==2.0.10',
+        'django-db-locking==2.1.0',
         'phonenumberslite==7.3.2',
         'six<2.0,>=1.11.0',
-        'future==0.16.0'
+        'future>=0.16.0'
     ],
     setup_requires=['pytest-runner', ],
     dependency_links=[],
