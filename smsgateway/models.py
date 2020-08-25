@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from builtins import object
 from django.db import models
 from django.utils.translation import ugettext_lazy
 
@@ -23,7 +24,7 @@ class SMS(models.Model):
     direction = models.IntegerField(choices=DIRECTION_CHOICES, default=DIRECTION_INBOUND,
                                     verbose_name=ugettext_lazy(u'direction'))
 
-    class Meta:
+    class Meta(object):
         get_latest_by = 'sent'
         ordering = ('sent',)
         verbose_name = ugettext_lazy(u'SMS')
@@ -43,7 +44,7 @@ class QueuedSMS(models.Model):
     priority = models.CharField(max_length=1, choices=PRIORITIES, default=PRIORITY_MEDIUM)
     reliable = models.BooleanField(default=False, blank=True, verbose_name=ugettext_lazy(u'is reliable'))
 
-    class Meta:
+    class Meta(object):
         get_latest_by = 'created'
         ordering = ('priority', 'created',)
         verbose_name = ugettext_lazy(u'Queued SMS')

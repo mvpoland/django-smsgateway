@@ -23,14 +23,15 @@
 """SMPP Command paramter types module"""
 
 
-class OctetStringType:
+from builtins import object
+class OctetStringType(object):
     """Octet string type (identifier only)"""
 
 
 ostr = OctetStringType
 
 
-class FlagType:
+class FlagType(object):
     """Flag type (identifier only)"""
 
 

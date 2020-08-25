@@ -12,7 +12,7 @@ accounts = getattr(settings, 'SMSGATEWAY_ACCOUNTS', {})
 
 
 class BackendDebugForm(forms.Form):
-    account = forms.ChoiceField(choices=[(k, k) for k in accounts.keys() if k != '__default__'])
+    account = forms.ChoiceField(choices=[(k, k) for k in list(accounts.keys()) if k != '__default__'])
     recipients = forms.CharField(help_text=u'Separate multiple recipients with a semicolon (;).')
     message = forms.CharField(widget=forms.widgets.Textarea())
     signature = forms.CharField()

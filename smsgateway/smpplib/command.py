@@ -23,6 +23,11 @@
 """SMPP Commands module"""
 
 from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import chr
+from builtins import map
+from builtins import object
 from struct import pack, unpack
 
 from .smpp import UnknownCommandError, next_seq
@@ -275,7 +280,7 @@ class Command(PDU):
 
     def _set_vars(self, **args):
 
-        for key, value in args.items():
+        for key, value in list(args.items()):
             if not hasattr(self, key) or getattr(self, key) is None:
                 setattr(self, key, value)
 
@@ -530,7 +535,7 @@ class Command(PDU):
         return False
 
 
-class Param:
+class Param(object):
     """Command parameter info class"""
 
     def __init__(self, **args):
@@ -543,7 +548,7 @@ class Param:
             raise ValueError('Invalid parameter type: {}'.format(args.get('type')))
 
         valid_keys = ['type', 'size', 'min', 'max', 'len_field']
-        for k in args.keys():
+        for k in list(args.keys()):
             if k not in valid_keys:
                 raise KeyError("Key '{}' not allowed here".format(k))
 

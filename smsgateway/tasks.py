@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+from __future__ import division
+from past.utils import old_div
 from datetime import datetime
 from logging import getLogger
 from redis import ConnectionPool, Redis
@@ -58,7 +60,7 @@ def _send_smses(send_deferred=False, backend=None, limit=None):
                     failures += 1
         finally:
             if successes and failures:
-                statsd.gauge('smsgateway.success_rate', successes / failures)
+                statsd.gauge('smsgateway.success_rate', old_div(successes, failures))
             else:
                 statsd.gauge('smsgateway.success_rate', 1)
 

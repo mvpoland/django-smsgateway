@@ -1,10 +1,11 @@
 
 from __future__ import absolute_import
+from builtins import object
 from south.db import db
 from django.db import models
 from smsgateway.models import *
 
-class Migration:
+class Migration(object):
     
     def forwards(self, orm):
         
