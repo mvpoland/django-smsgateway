@@ -13,12 +13,8 @@ from django.core.exceptions import ImproperlyConfigured
 from smsgateway.enums import DIRECTION_OUTBOUND
 from smsgateway.models import SMS
 from smsgateway.sms import SMSRequest
-from smsgateway.utils import is_pre_django2
 
-if is_pre_django2():
-    from django.core.urlresolvers import get_callable
-else:
-    from django.urls import get_callable
+from django.urls import get_callable
 
 
 logger = getLogger(__name__)
