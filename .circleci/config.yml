@@ -24,12 +24,6 @@ common: &common
 
 
 jobs:
-  py27:
-    <<: *common
-    docker:
-      - image: circleci/python:2.7
-        environment:
-          TOXENV=py27-dj111
   py35:
     <<: *common
     docker:
@@ -53,12 +47,11 @@ jobs:
     docker:
       - image: circleci/python:3.8
         environment:
-          TOXENV=py38-dj20,py38-dj21,py38-dj22
+          TOXENV=py38-dj22
 
 workflows:
   test:
     jobs:
-      - py27
       - py35
       - py36
       - py37
