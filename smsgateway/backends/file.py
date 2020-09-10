@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from codecs import open
 
 from django.http import HttpResponse
@@ -14,7 +13,7 @@ class FileBackend(SMSBackend):
         path = account_dict['path']
 
         f = open(path, 'ab', 'utf8')
-        f.write(u'{},{},{}\n'.format(sms_request.to[0], sms_request.msg, sms_request.signature))
+        f.write('{},{},{}\n'.format(sms_request.to[0], sms_request.msg, sms_request.signature))
         f.close()
 
         return None

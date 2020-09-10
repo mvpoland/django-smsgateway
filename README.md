@@ -1,5 +1,11 @@
-README
-------
+## Changelog
+
+### 3.0.1
+
+- Renamed smsgateway.tasks.recv_smses param `async` to `run_async`.
+- Dropped future and six references.
+
+## Installation
 
 How to install:
 

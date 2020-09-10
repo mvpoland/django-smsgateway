@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from django.http import HttpResponse
 from django.conf import settings
 from django.utils.http import urlencode
@@ -32,7 +31,7 @@ class KPNBEBackend(SMSBackend):
 
         # Encode message
         msg = sms_request.msg
-        msg = msg.replace(u'€', u'EUR')
+        msg = msg.replace('€', EUR')
         try:
             msg = msg.encode('iso-8859-1', 'replace')
         except:

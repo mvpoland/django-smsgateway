@@ -1,10 +1,8 @@
-from __future__ import absolute_import
 from logging import getLogger
 from phonenumbers import parse
 from re import sub
 
 from django.conf import settings
-from six import iteritems
 
 from smsgateway import get_account
 
@@ -17,7 +15,7 @@ def strspn(source, allowed):
     for c in source:
         if c in allowed:
             newchrs.append(c)
-    return u''.join(newchrs)
+    return ''.join(newchrs)
 
 
 def check_cell_phone_number(number):
@@ -51,7 +49,7 @@ def _match_keywords(content, hooks):
     """
     # Go throught the different hooks
     matched = False
-    for keyword, hook in iteritems(hooks):
+    for keyword, hook in hooks.items():
         # If the keyword of this hook matches
         if content.startswith(keyword + ' ') or keyword == content:
             matched = True

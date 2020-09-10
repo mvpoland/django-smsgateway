@@ -7,7 +7,7 @@ common: &common
     - checkout
     - restore_cache:
         keys:
-          - v2-deps-{{ .Environment.CIRCLE_JOB }}-{{ checksum "tox.ini" }}-{{ checksum "requirements/requirements_test.txt" }}
+          - v2-deps-{{ .Environment.CIRCLE_JOB }}-{{ checksum "tox.ini" }}-{{ checksum "requirements/requirements_test.txt" }}-{{ checksum "setup.py" }}
     - run:
         name: install dependencies
         command: pip install --user tox
@@ -20,7 +20,7 @@ common: &common
           - ~/.cache/pip
           - ~/.local
           - ./eggs
-        key: v2-deps-{{ .Environment.CIRCLE_JOB }}-{{ checksum "tox.ini" }}-{{ checksum "requirements/requirements_test.txt" }}
+        key: v2-deps-{{ .Environment.CIRCLE_JOB }}-{{ checksum "tox.ini" }}-{{ checksum "requirements/requirements_test.txt" }}-{{ checksum "setup.py" }}
 
 
 jobs:
@@ -30,24 +30,28 @@ jobs:
       - image: circleci/python:3.5
         environment:
           TOXENV=py35-dj111,py35-dj20,py35-dj21,py35-dj22
+      - image: redis:3
   py36:
     <<: *common
     docker:
       - image: circleci/python:3.6
         environment:
           TOXENV=py36-dj111,py36-dj20,py36-dj21,py36-dj22
+      - image: redis:3
   py37:
     <<: *common
     docker:
       - image: circleci/python:3.7
         environment:
           TOXENV=py37-dj111,py37-dj20,py37-dj21,py37-dj22
+      - image: redis:3
   py38:
     <<: *common
     docker:
       - image: circleci/python:3.8
         environment:
           TOXENV=py38-dj22
+      - image: redis:3
 
 workflows:
   test:

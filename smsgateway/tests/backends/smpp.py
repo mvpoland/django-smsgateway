@@ -1,10 +1,7 @@
-from __future__ import absolute_import
-from builtins import zip
 from django.test import TestCase as DjangoTestCase
 from smsgateway.backends.smpp import SMPPBackend
 from smsgateway.sms import SMSRequest
 from smsgateway.utils import check_cell_phone_number, truncate_sms
-from six.moves import zip
 
 
 req_data = {

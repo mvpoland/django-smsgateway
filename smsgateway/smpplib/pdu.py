@@ -21,9 +21,6 @@
 # Added support for Optional TLV's
 
 """PDU module"""
-
-from __future__ import absolute_import
-from builtins import object
 from struct import pack, unpack
 
 #
@@ -187,7 +184,7 @@ def factory(command_name, **args):
     return cc(command_name, **(args))
 
 
-class PDU(object):
+class PDU:
     """PDU class"""
 
     length = 0

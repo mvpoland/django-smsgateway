@@ -21,19 +21,14 @@
 # Added support for Optional TLV's
 
 """SMPP client module"""
-from __future__ import absolute_import
-from builtins import map
-from builtins import str
-from builtins import object
 from logging import getLogger
 
 from socket import socket, AF_INET, SOCK_STREAM, error as socket_error, timeout
 from struct import unpack, error as struct_error
 from binascii import b2a_hex
 
-from .smpp import make_pdu, parse_pdu
-from .pdu import descs, SMPP_ESME_RINVBNDSTS, PDU
-from six.moves import map
+from smsgateway.smpplib.smpp import make_pdu, parse_pdu
+from smsgateway.smpplib.pdu import descs, SMPP_ESME_RINVBNDSTS, PDU
 
 
 SMPP_CLIENT_STATE_CLOSED = 0
@@ -118,7 +113,7 @@ def log(*msg):
     msg = list(map(str, msg))
 
 
-class Client(object):
+class Client:
     """SMPP client class"""
 
     state = SMPP_CLIENT_STATE_CLOSED

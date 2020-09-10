@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-from builtins import map
 from datetime import datetime
 from re import findall
 
@@ -10,7 +8,6 @@ from smsgateway import get_account, send, send_queued
 from smsgateway.models import SMS
 from smsgateway.backends.base import SMSBackend
 from smsgateway.utils import check_cell_phone_number
-from six.moves import map
 
 
 class MobileWebBackend(SMSBackend):
@@ -29,7 +26,7 @@ class MobileWebBackend(SMSBackend):
             'sid': account_dict['sid'],
             'msgcontent': msg,
         })
-        return u'http://gateway.mobileweb.be/smsin.asp?{}'.format(querystring)
+        return 'http://gateway.mobileweb.be/smsin.asp?{}'.format(querystring)
 
     def validate_send_result(self, result):
         return 'accepted' in result

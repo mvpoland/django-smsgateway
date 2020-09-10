@@ -1,8 +1,4 @@
 # -*- encoding: utf-8 -*-
-
-from __future__ import absolute_import
-from builtins import next
-from builtins import object
 from datetime import datetime
 from logging import getLogger
 
@@ -32,7 +28,7 @@ class SMPPBackend(SMSBackend):
         if sms_request.signature:
             self.sender = sms_request.signature
         else:
-            self.sender = u'[{}]'.format(self.get_slug())
+            self.sender = '[{}]'.format(self.get_slug())
 
         self.sms_data_iter = SMSDataIterator(sms_list)
         return True
@@ -41,7 +37,7 @@ class SMPPBackend(SMSBackend):
         if not sms_request:
             return []
         sms_list = []
-        reference = (datetime.now().strftime('%Y%m%d%H%M%S') + u''.join(sms_request.to[:1]))
+        reference = (datetime.now().strftime('%Y%m%d%H%M%S') + ''.join(sms_request.to[:1]))
         for msisdn in sms_request.to:
             sms_list.append(SMSRequest(msisdn,
                                        sms_request.msg,
@@ -107,7 +103,7 @@ class SMPPBackend(SMSBackend):
         return 'smpp'
 
 
-class SMSDataIterator(object):
+class SMSDataIterator:
     def __init__(self, sms_list):
         self.sms_list = sms_list
 
@@ -118,7 +114,7 @@ class SMSDataIterator(object):
         while len(self.sms_list):
             sms = self.sms_list.pop(0)
             text = sms.msg
-            text = text.replace(u'€', u'EUR')
+            text = text.replace('€', 'EUR')
             text = text.encode('iso-8859-1', 'replace')
 
             return {

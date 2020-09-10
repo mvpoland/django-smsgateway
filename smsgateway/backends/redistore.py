@@ -1,8 +1,4 @@
 # -*- encoding: utf-8 -*-
-
-from __future__ import absolute_import
-from builtins import str
-from builtins import object
 from datetime import datetime
 from hashlib import md5
 from logging import getLogger
@@ -40,7 +36,7 @@ class RedistoreBackend(SMSBackend):
         if sms_request.signature:
             self.sender = sms_request.signature
         else:
-            self.sender = u'[{}]'.format(self.get_slug())
+            self.sender = '[{}]'.format(self.get_slug())
 
         self.sms_data_iter = SMSDataIterator(sms_list, account_dict)
         self.redis_key_prefix = account_dict['key_prefix']
@@ -142,7 +138,7 @@ class RedistoreBackend(SMSBackend):
         return 'redistore'
 
 
-class SMSDataIterator(object):
+class SMSDataIterator:
     def __init__(self, sms_list, account_dict):
         self.sms_list = sms_list
         self.source_addr_ton = account_dict['source_addr_ton']
@@ -156,7 +152,7 @@ class SMSDataIterator(object):
         while len(self.sms_list):
             sms = self.sms_list.pop(0)
             text = sms.msg
-            text = text.replace(u'€', u'EUR')
+            text = text.replace('€', 'EUR')
             text = text.encode('iso-8859-1', 'replace')
 
             return {
