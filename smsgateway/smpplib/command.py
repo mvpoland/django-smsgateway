@@ -21,19 +21,11 @@
 
 
 """SMPP Commands module"""
-
-from __future__ import absolute_import
-from future import standard_library
-standard_library.install_aliases()
-from builtins import chr
-from builtins import map
-from builtins import object
 from struct import pack, unpack
 
-from .smpp import UnknownCommandError, next_seq
-from .pdu import PDU, SMPP_ESME_ROK
-from .ptypes import ostr, flag
-from six.moves import map
+from smsgateway.smpplib.smpp import UnknownCommandError, next_seq
+from smsgateway.smpplib.pdu import PDU, SMPP_ESME_ROK
+from smsgateway.smpplib.ptypes import ostr, flag
 
 
 #
@@ -535,7 +527,7 @@ class Command(PDU):
         return False
 
 
-class Param(object):
+class Param:
     """Command parameter info class"""
 
     def __init__(self, **args):

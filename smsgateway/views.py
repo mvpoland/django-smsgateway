@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from django import forms
 from django.http import Http404
 from django.conf import settings
@@ -13,7 +12,7 @@ accounts = getattr(settings, 'SMSGATEWAY_ACCOUNTS', {})
 
 class BackendDebugForm(forms.Form):
     account = forms.ChoiceField(choices=[(k, k) for k in list(accounts.keys()) if k != '__default__'])
-    recipients = forms.CharField(help_text=u'Separate multiple recipients with a semicolon (;).')
+    recipients = forms.CharField(help_text='Separate multiple recipients with a semicolon (;).')
     message = forms.CharField(widget=forms.widgets.Textarea())
     signature = forms.CharField()
 
@@ -36,9 +35,9 @@ def backend_debug(request):
                 form.cleaned_data['account']
             )
             if success:
-                context.update({'message': u'Text message sent'})
+                context.update({'message': 'Text message sent'})
             else:
-                context.update({'message': u'Sending failed'})
+                context.update({'message': 'Sending failed'})
     else:
         form = BackendDebugForm()
 

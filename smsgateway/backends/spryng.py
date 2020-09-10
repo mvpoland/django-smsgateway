@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
-from builtins import chr
-from past.builtins import basestring
-
 from django.http import HttpResponse
 from django.utils.http import urlencode
 from django.conf import settings
@@ -15,13 +10,13 @@ class SpryngBackend(SMSBackend):
     def get_send_url(self, sms_request, account_dict):
         # Encode message
         msg = sms_request.msg
-        msg = msg.replace(u'€', chr(128))
+        msg = msg.replace('€', chr(128))
         try:
             msg = msg.encode('iso-8859-15')
         except:
             pass
 
-        if isinstance(sms_request.to, basestring):
+        if isinstance(sms_request.to, str):
             sms_request.to = [sms_request.to]
 
         # Spryng doesn't accept the prefix '+'
@@ -57,4 +52,4 @@ class SpryngBackend(SMSBackend):
         return 1
 
     def validate_send_result(self, result):
-        return result == u'1'
+        return result == '1'

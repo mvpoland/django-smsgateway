@@ -1,11 +1,7 @@
-from __future__ import absolute_import
-
-from builtins import object
 from datetime import datetime
 from logging import getLogger
 from re import sub
-from six import iteritems
-from six.moves.urllib.request import urlopen
+from urllib.request import urlopen
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -25,14 +21,14 @@ except:
     raise ImproperlyConfigured('No SMSGATEWAY_HOOK defined.')
 
 
-class SMSBackend(object):
+class SMSBackend:
     def send(self, sms_request, account_dict):
         """
         Send an SMS message to one or more recipients, and create entries in the
         SMS table for each successful attempt.
         """
         capacity = self.get_url_capacity()
-        sender = u'[{}]'.format(self.get_slug()) if not sms_request.signature else sms_request.signature
+        sender = '[{}]'.format(self.get_slug()) if not sms_request.signature else sms_request.signature
         reference = self.get_send_reference(sms_request)
         all_succeeded = True
 
@@ -53,7 +49,7 @@ class SMSBackend(object):
             url = self.get_send_url(request, account_dict)
 
             # Make request to provider
-            result = u''
+            result = ''
             if url is not None:
                 try:
                     sock = urlopen(url)
@@ -112,7 +108,7 @@ class SMSBackend(object):
         """
         Generate a reference for the send sms
         """
-        return datetime.now().strftime('%Y%m%d%H%M%S') + u''.join(sms_request.to[:1])
+        return datetime.now().strftime('%Y%m%d%H%M%S') + ''.join(sms_request.to[:1])
 
     def get_gateway_ref(self, reference, result=None):
         """
@@ -132,7 +128,7 @@ class SMSBackend(object):
         """
         # Go throught the different hooks
         matched = False
-        for keyword, hook in iteritems(hooks):
+        for keyword, hook in hooks.items():
             # If the keyword of this hook matches
             if content.startswith(keyword + ' ') or content == keyword:
                 matched = True

@@ -1,12 +1,9 @@
-from __future__ import absolute_import
-from builtins import zip
 from django.conf import settings
 from django.test import TestCase as DjangoTestCase
 
 from smsgateway.backends.redistore import RedistoreBackend
 from smsgateway.sms import SMSRequest
 from smsgateway.utils import check_cell_phone_number, truncate_sms
-from six.moves import zip
 
 
 req_data = {

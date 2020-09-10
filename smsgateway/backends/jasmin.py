@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
 from datetime import datetime
 from logging import getLogger
 
-from six.moves.urllib.request import urlopen
-from six.moves.urllib.parse import urlencode
+from urllib.request import urlopen
+from urllib.parse import urlencode
 from django.http import HttpResponse
 
 from smsgateway import get_account, send, send_queued
@@ -27,7 +25,7 @@ class JasminBackend(SMSBackend):
         SMS table for each successful attempt.
         """
         capacity = self.get_url_capacity()
-        sender = u'[{}]'.format(self.get_slug()) if not sms_request.signature else sms_request.signature
+        sender = '[{}]'.format(self.get_slug()) if not sms_request.signature else sms_request.signature
         reference = self.get_send_reference(sms_request)
         all_succeeded = True
 
@@ -90,7 +88,7 @@ class JasminBackend(SMSBackend):
             'content': msg,
             'coding': 3,  # latin-1
         })
-        return u'{}?{}'.format(account_dict['url'], querystring)
+        return '{}?{}'.format(account_dict['url'], querystring)
 
     def validate_send_result(self, result):
         return 'Success' in result

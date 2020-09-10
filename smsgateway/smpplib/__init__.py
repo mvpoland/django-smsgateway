@@ -20,8 +20,7 @@
 # Modified by Yusuf Kaka <yusufk at gmail>
 # Added support for Optional TLV's
 
-from __future__ import absolute_import
-from . import smpp  # noqa
-from . import pdu  # noqa
-from . import command  # noqa
-from . import client  # noqa
+from smsgateway.smpplib import smpp  # noqa
+from smsgateway.smpplib import pdu  # noqa
+from smsgateway.smpplib import command  # noqa
+from smsgateway.smpplib import client  # noqa

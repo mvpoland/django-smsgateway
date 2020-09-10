@@ -1,3 +1,6 @@
+from collections import OrderedDict
+
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -73,19 +76,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.sites',
 
+    'locking',
     'smsgateway',
     'smsgateway.tests',
 ]
 
-SMSGATEWAY_HOOK = {
-    'SIM': {
-        'TOPUP': 'mvne.telco.direct_debit.utils.incoming_topup_sms',
-        '*': 'mvne.activation.utils.incoming_sms'
-    }
-}
+SMSGATEWAY_HOOK = OrderedDict([
+    ('TOPUP NOLIMIT', {'*': 'some_handler_dont_care'}),
+])
 
 SMSGATEWAY_ACCOUNTS = {
-     '__default__': 'smpp',
+     '__default__': 'redistore',
      'smpp': {
         'backend': 'smpp',
         'host': 'localhost',

@@ -1,6 +1,3 @@
-from __future__ import absolute_import
-from __future__ import division
-from past.utils import old_div
 from datetime import datetime
 from logging import getLogger
 from redis import ConnectionPool, Redis
@@ -60,7 +57,7 @@ def _send_smses(send_deferred=False, backend=None, limit=None):
                     failures += 1
         finally:
             if successes and failures:
-                statsd.gauge('smsgateway.success_rate', old_div(successes, failures))
+                statsd.gauge('smsgateway.success_rate', successes // failures)
             else:
                 statsd.gauge('smsgateway.success_rate', 1)
 
@@ -96,7 +93,7 @@ def process_smses(smsk, sms_id, account_slug):
     task_logger.debug('End processing incoming SMS key: %s', smsk)
 
 
-def recv_smses(account_slug='redistore', async=False):
+def recv_smses(account_slug='redistore', run_async=False):
     def _(key):
         return '{}{}'.format(racc['key_prefix'], key)
 
@@ -109,7 +106,7 @@ def recv_smses(account_slug='redistore', async=False):
     rconn = Redis(connection_pool=rpool)
     logger.info('Processing incoming SMSes for %s', account_slug)
 
-    process_func = process_smses.delay if async else process_smses
+    process_func = process_smses.delay if run_async else process_smses
 
     while True:
         smsk = rconn.lpop(_('inq'))
@@ -121,6 +118,7 @@ def recv_smses(account_slug='redistore', async=False):
         if not smsd:
             logger.error('SMS key %r is empty', smsk)
             continue
+        smsd = {k.decode(): v.decode() for k, v in smsd.items()}
         # since microsecond are not always present - we remove them
         smsd['sent'] = datetime.strptime(smsd['sent'].split('.')[0],
                                          inq_ts_fmt)
