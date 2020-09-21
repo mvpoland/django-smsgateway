@@ -20,7 +20,7 @@ setup(
         'statsd>=2.1.2',
         'redis==2.10.6',
         'pytz>=2020.1',
-        'django-db-locking==2.1.0',
+        'django-db-locking>=2.2,<2.3',
         'phonenumberslite==8.12.9',
         'celery<5',
     ],
@@ -41,5 +41,7 @@ setup(
         'Framework :: Django :: 2.0',
         'Framework :: Django :: 2.1',
         'Framework :: Django :: 2.2',
+        'Framework :: Django :: 3.0',
+        'Framework :: Django :: 3.1',
     ],
 )
