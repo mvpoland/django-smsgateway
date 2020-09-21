@@ -79,7 +79,7 @@ def parse_sms(content):
     """
     # work with uppercase and single spaces
     content = content.upper().strip()
-    content = sub('\s+', ' ', content)
+    content = sub(r'\s+', ' ', content)
 
     from smsgateway.backends.base import all_hooks
     content = _match_keywords(content, all_hooks)
