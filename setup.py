@@ -18,7 +18,7 @@ setup(
     install_requires=[
         'django-statsd-unleashed>=1.0.1',
         'statsd>=2.1.2',
-        'redis==2.10.6',
+        'redis==4.4.4',
         'pytz>=2020.1',
         'django-db-locking>=2.2,<2.3',
         'phonenumberslite==8.12.9',
