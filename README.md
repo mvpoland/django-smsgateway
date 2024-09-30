@@ -1,5 +1,10 @@
 ## Changelog
 
+### 3.1.2
+
+- Added configurable Redis expiration timeouts for incoming/outgoing messages.
+- Added `run_maintenance_cleanup` task to remove obsolete messages.
+
 ### 3.0.1
 
 - Renamed smsgateway.tasks.recv_smses param `async` to `run_async`.
