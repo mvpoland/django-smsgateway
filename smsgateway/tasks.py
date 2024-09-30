@@ -9,6 +9,7 @@ from django_statsd.clients import statsd
 from locking.models import NonBlockingLock
 
 from smsgateway import get_account, send, send_queued
+from smsgateway.backends import get_backend
 from smsgateway.backends.base import SMSBackend
 from smsgateway.enums import PRIORITY_DEFERRED
 from smsgateway.models import SMS, QueuedSMS
@@ -20,6 +21,9 @@ logger = getLogger(__name__)
 DEFAULT_LIMIT = getattr(settings, 'SMSGATEWAY_DEFAULT_LIMIT', 50)
 ACCOUNTS = settings.SMSGATEWAY_ACCOUNTS
 DEFAULT_DEFERRED_BACKEND = ACCOUNTS.get('__deferred__', None)
+INCOMING_SMS_EXPIRE_SECONDS = getattr(
+    settings, 'SMSGATEWAY_INCOMING_SMS_EXPIRE_SECONDS', 0
+)
 
 
 def _send_smses(send_deferred=False, backend=None, limit=None):
@@ -129,7 +133,28 @@ def recv_smses(account_slug='redistore', run_async=False):
             smsd['sender'] = msisdn_prefix + smsd['sender']
         smsobj = SMS(**smsd)
         smsobj.save()
+        if INCOMING_SMS_EXPIRE_SECONDS:
+            rconn.expire(smsk, INCOMING_SMS_EXPIRE_SECONDS)
         process_func(smsk, smsobj.pk, account_slug)
 
     logger.info('End sharing out incoming SMSes for %s (%d saved).',
                 account_slug, count)
+
+
+@shared_task
+def run_maintenance_cleanup(backend_slug, account_slug):
+    logger.info(
+        'Started maintenance cleanup task (backend: %s, account: %s)',
+        backend_slug,
+        account_slug,
+    )
+
+    backend = get_backend(backend_slug)
+    account_dict = get_account(account_slug)
+    backend.maintenance_cleanup(account_dict)
+
+    logger.info(
+        'Finished maintenance cleanup task (backend: %s, account: %s)',
+        backend_slug,
+        account_slug,
+    )

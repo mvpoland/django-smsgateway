@@ -4,6 +4,8 @@ from hashlib import md5
 from logging import getLogger
 from redis import ConnectionPool, Redis
 
+from django.conf import settings
+
 from smsgateway.enums import DIRECTION_OUTBOUND
 from smsgateway.models import SMS
 from smsgateway.backends.base import SMSBackend
@@ -11,6 +13,10 @@ from smsgateway.sms import SMSRequest
 
 
 logger = getLogger(__name__)
+
+OUTGOING_SMS_EXPIRE_SECONDS = getattr(
+    settings, 'SMSGATEWAY_OUTGOING_SMS_EXPIRE_SECONDS', 0
+)
 
 
 class RedistoreBackend(SMSBackend):
@@ -39,16 +45,21 @@ class RedistoreBackend(SMSBackend):
             self.sender = '[{}]'.format(self.get_slug())
 
         self.sms_data_iter = SMSDataIterator(sms_list, account_dict)
-        self.redis_key_prefix = account_dict['key_prefix']
+
+        self._initialize_redis_pool(account_dict)
+
+        return True
+
+    def _initialize_redis_pool(self, account_dict):
         host = account_dict['host'] or 'localhost'
         port = account_dict['port'] or 6379
+        self.redis_key_prefix = account_dict['key_prefix']
         self.redis_pool = ConnectionPool(
             host=host,
             port=port,
             db=account_dict['dbn'],
             password=account_dict['pwd']
         )
-        return True
 
     def get_send_reference(self, sms_request):
         return '+'.join([
@@ -91,6 +102,8 @@ class RedistoreBackend(SMSBackend):
             source_sms = sms_data.pop('source_sms')
             sms_key = self.prefix('sms:{}:{}'.format(key, idx))
             pipe.hmset(sms_key, sms_data)
+            if OUTGOING_SMS_EXPIRE_SECONDS:
+                pipe.expire(sms_key, OUTGOING_SMS_EXPIRE_SECONDS)
             pipe.rpush(queue_key, sms_key)
             sent_sms = {
                 'sender': self.sender,
@@ -105,26 +118,27 @@ class RedistoreBackend(SMSBackend):
 
         # execute the pipe
         pipe_results = pipe.execute()
-        return pipe_results
+
+        # split results into chunks for each SMS (last will be a result of lpush)
+        results_per_sms = 3 if OUTGOING_SMS_EXPIRE_SECONDS else 2
+        pipe_results = [pipe_results[i:i + results_per_sms]
+                        for i in range(0, len(pipe_results), results_per_sms)]
+
+        return pipe_results[:-1], pipe_results[-1]
 
     def _check_sent_smses(self, results):
         """Check pipe execution results and create SMS objects."""
-        if len(results) % 2 != 1:
+        sms_results, lpush_result = results
+        if not sms_results:
             return False
-        counter = 0
-        while True:
-            if len(results) == 1:
-                break
-            counter += 1
-            created, listlen = results[:2]
-            results = results[2:]
+
+        for counter, result in enumerate(sms_results, start=1):
+            created, listlen = result[0], result[-1]
             instance_data = self.sent_smses.pop(0)
             if created and listlen == counter:
                 SMS.objects.create(**instance_data)
-        if results.pop():
-            return True
-        else:
-            return False
+
+        return True if lpush_result[0] else False
 
     def send(self, sms_request, account_dict):
         """RedistoreBackend Entry Point"""
@@ -136,6 +150,37 @@ class RedistoreBackend(SMSBackend):
 
     def get_slug(self):
         return 'redistore'
+
+    def maintenance_cleanup(self, account_dict):
+        """
+        Perform maintenance cleanup of obsolete messages.
+
+        This method is responsible for cleaning up messages that were not processed
+        due to errors, breakdowns, or messages that got stuck in the system. It ensures
+        that the system remains clean and free of outdated or problematic messages.
+
+        :param dict account_dict: account information needed to initialize the redis pool
+
+        Note:
+        The "subq" queue is an internal redis queue of the "smpp-esme" service.
+        We reference it here to have a single place responsive for all queues cleanups.
+        """
+        self._initialize_redis_pool(account_dict)
+
+        redis_conn = Redis(connection_pool=self.redis_pool)
+        subq_queue_name = self.prefix("subq")
+        records = redis_conn.lrange(subq_queue_name, 0, -1)
+        records = [r.decode("utf-8") if isinstance(r, bytes) else r for r in records]
+        removed = []
+        for record in records:
+            if not redis_conn.exists(record):
+                redis_conn.lrem(subq_queue_name, 1, record)
+                removed.append(record)
+
+        removed_count = len(removed)
+        remaining_count = len(records) - removed_count
+        logger.info("Cleared %d records from 'subq' queue, remaining: %d",
+                    removed_count, remaining_count)
 
 
 class SMSDataIterator:

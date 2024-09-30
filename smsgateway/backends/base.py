@@ -176,3 +176,15 @@ class SMSBackend:
 
         callable_function = get_callable(callable_name)
         return callable_function(request, sms)
+
+    def maintenance_cleanup(self, account_dict):
+        """
+        Perform maintenance cleanup of obsolete messages.
+
+        This method is responsible for cleaning up messages that were not processed
+        due to errors, breakdowns, or messages that got stuck in the system. It ensures
+        that the system remains clean and efficient.
+
+        :param dict account_dict: account information needed to initialize the redis pool
+        """
+        pass
