@@ -31,7 +31,7 @@ class KPNBEBackend(SMSBackend):
 
         # Encode message
         msg = sms_request.msg
-        msg = msg.replace('€', EUR')
+        msg = msg.replace('€', 'EUR')
         try:
             msg = msg.encode('iso-8859-1', 'replace')
         except:

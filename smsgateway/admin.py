@@ -1,13 +1,18 @@
 from django.contrib import admin
+from rangefilter.filters import DateRangeFilterBuilder
 
 from smsgateway.models import SMS, QueuedSMS
 
 
 class SMSAdmin(admin.ModelAdmin):
-    date_hierarchy = 'sent'
     list_display = ('direction', 'sent', 'sender', 'to', 'content', 'operator', 'backend', 'gateway', 'gateway_ref')
     search_fields = ('sender', 'to', 'content',)
-    list_filter = ('operator', 'direction', 'gateway', 'backend')
+    list_filter = (
+        (
+            "sent", DateRangeFilterBuilder(title="By Sent date"),
+        ),
+        'operator', 'direction', 'gateway', 'backend',
+    )
 
 
 admin.site.register(SMS, SMSAdmin)
