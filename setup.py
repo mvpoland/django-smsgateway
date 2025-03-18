@@ -23,6 +23,7 @@ setup(
         'django-db-locking>=2.2,<2.3',
         'phonenumberslite==8.12.9',
         'celery<5',
+        'django-admin-rangefilter==0.13.2',
     ],
     setup_requires=['pytest-runner', ],
     dependency_links=[],
