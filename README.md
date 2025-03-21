@@ -1,5 +1,11 @@
 ## Changelog
 
+### 3.1.3
+- Added requirement `django-admin-rangefilter==0.13.2`
+- Added sent date range filter to SMSAdmin's list filter
+- Removed date_hierarchy from SMSAdmin
+- Fix missing quote in `smsgateway/backends/kpnbe.py`
+
 ### 3.1.2
 
 - Added configurable Redis expiration timeouts for incoming/outgoing messages.
