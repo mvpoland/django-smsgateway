@@ -174,7 +174,7 @@ class RedistoreBackend(SMSBackend):
         removed = []
         for record in records:
             if not redis_conn.exists(record):
-                redis_conn.lrem(subq_queue_name, 1, record)
+                redis_conn.lrem(name=subq_queue_name, value=record, num=1)
                 removed.append(record)
 
         removed_count = len(removed)
